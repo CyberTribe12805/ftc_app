@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Code;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import java.util.Locale;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
@@ -14,14 +19,14 @@ import android.view.View;
 
 public class AutonomousProgram extends LinearOpMode {
 
- private HardwarePushbot robot = new HardwarePushbot();
- private ElapsedTime runtime = new ElapsedTime();
+    private HardwarePushbot robot = new HardwarePushbot();
+    private ElapsedTime runtime = new ElapsedTime();
 
 
- @Override
- public void runOpMode() {
+    @Override
+    public void runOpMode() {
 
-  robot.init(hardwareMap);
+        robot.init(hardwareMap);
 
         robot.sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
         robot.sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
@@ -32,127 +37,139 @@ public class AutonomousProgram extends LinearOpMode {
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
 
-  telemetry.addData("Status", "Ready to run"); //
-  telemetry.update();
+        telemetry.addData("Status", "Ready to run");
+        telemetry.update();
 
-  waitForStart();
-  
-            Color.RGBToHSV((int) (robot.sensorColor.red() * SCALE_FACTOR),
-                    (int) (robot.sensorColor.green() * SCALE_FACTOR),
-                    (int) (robot.sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
+        waitForStart();
 
-            telemetry.addData("Distance (cm)",
-                    String.format(Locale.US, "%.02f", robot.sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Alpha", robot.sensorColor.alpha());
-            telemetry.addData("Red  ", robot.sensorColor.red());
-            telemetry.addData("Green", robot.sensorColor.green());
-            telemetry.addData("Blue ", robot.sensorColor.blue());
-            telemetry.addData("Hue", hsvValues[0]);
+        Color.RGBToHSV((int) (robot.sensorColor.red() * SCALE_FACTOR),
+                (int) (robot.sensorColor.green() * SCALE_FACTOR),
+                (int) (robot.sensorColor.blue() * SCALE_FACTOR),
+                hsvValues);
 
-            relativeLayout.post(new Runnable() {
-                public void run() {
-                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-                }
-            });
+        telemetry.addData("Distance (cm)",
+                String.format(Locale.US, "%.02f", robot.sensorDistance.getDistance(DistanceUnit.CM)));
+        telemetry.addData("Alpha", robot.sensorColor.alpha());
+        telemetry.addData("Red  ", robot.sensorColor.red());
+        telemetry.addData("Green", robot.sensorColor.green());
+        telemetry.addData("Blue ", robot.sensorColor.blue());
+        telemetry.addData("Hue", hsvValues[0]);
 
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+            }
+        });
 
-  CloseGrippie(1);
-  StopGrippie();
-  LiftUp(1);
-  StopLift();
-  DrivePowerTime(1, 1, 1);
-  TurnRight(1);
-  LiftDown(1);
-  OpenGrippie(1);
-  StopGrippie();
+        CloseGrippie(1);
+        StopGrippie();
+        ColorArmOut(1);
+        StopColorArm();
 
- }
+        if (robot.sensorColor.red() > 10 && robot.sensorDistance.getDistance(DistanceUnit.CM) < 5) {
+            ColorArmIn(1);
+            DrivePowerTime(1, -1, 2);
+            StopDriving();
+        } else {
+            ColorArmIn(1);
+            DrivePowerTime(-1, 1, 2);
+            StopDriving();
+        }
 
- private void DrivePowerTime(int lPower, int rPower, double driveTime) {
-  robot.motor_bLeft.setPower(lPower);
-  robot.motor_bRight.setPower(rPower);
-  robot.motor_fLeft.setPower(lPower);
-  robot.motor_fRight.setPower(rPower);
-  smartSleep(driveTime);
- }
+        LiftUp(1);
+        StopLift();
+        DrivePowerTime(1, -1, 1);
+        TurnRight(1);
+        LiftDown(1);
+        OpenGrippie(1);
+        StopGrippie();
 
- private void TurnRight(double turnRightTime) {
-  robot.motor_bLeft.setPower(-1);
-  robot.motor_bRight.setPower(1);
-  robot.motor_fLeft.setPower(-1);
-  robot.motor_fRight.setPower(1);
-  smartSleep(turnRightTime);
- }
+    }
 
- public void TurnLeft(long turnLeftTime) {
-  robot.motor_bLeft.setPower(1);
-  robot.motor_bRight.setPower(-1);
-  robot.motor_fLeft.setPower(1);
-  robot.motor_fRight.setPower(-1);
-  smartSleep(turnLeftTime);
- }
+    private void DrivePowerTime(int lPower, int rPower, double driveTime) {
+        robot.motor_bLeft.setPower(lPower);
+        robot.motor_bRight.setPower(rPower);
+        robot.motor_fLeft.setPower(lPower);
+        robot.motor_fRight.setPower(rPower);
+        smartSleep(driveTime);
+    }
 
- private void CloseGrippie(double closeGrippieTime) {
-  robot.grippie.setPower(1);
-  smartSleep(closeGrippieTime);
- }
+    private void TurnRight(double turnRightTime) {
+        robot.motor_bLeft.setPower(-1);
+        robot.motor_bRight.setPower(1);
+        robot.motor_fLeft.setPower(-1);
+        robot.motor_fRight.setPower(1);
+        smartSleep(turnRightTime);
+    }
 
- private void OpenGrippie(double openGrippietime) {
-  robot.grippie.setPower(-1);
-  smartSleep(openGrippietime);
- }
+    public void TurnLeft(long turnLeftTime) {
+        robot.motor_bLeft.setPower(1);
+        robot.motor_bRight.setPower(-1);
+        robot.motor_fLeft.setPower(1);
+        robot.motor_fRight.setPower(-1);
+        smartSleep(turnLeftTime);
+    }
 
- public void ColorArmOut(double armOutTime) {
-  robot.color_arm.setPosition(0);
-  smartSleep(armOutTime);
- }
+    private void CloseGrippie(double closeGrippieTime) {
+        robot.grippie.setPower(1);
+        smartSleep(closeGrippieTime);
+    }
 
- public void ColorArmIn(double armInTime) {
-  robot.color_arm.setPosition(1.0);
-  smartSleep(armInTime);
- }
+    private void OpenGrippie(double openGrippietime) {
+        robot.grippie.setPower(-1);
+        smartSleep(openGrippietime);
+    }
 
- private void LiftUp(double liftUpTime) {
-  robot.right_arm.setPosition(0);
-  robot.left_arm.setPosition(1.0);
-  smartSleep(liftUpTime);
- }
+    public void ColorArmOut(double armOutTime) {
+        robot.color_arm.setPosition(0);
+        smartSleep(armOutTime);
+    }
 
- private void LiftDown(double liftDownTime) {
-  robot.right_arm.setPosition(1.0);
-  robot.left_arm.setPosition(0);
-  smartSleep(liftDownTime);
- }
+    public void ColorArmIn(double armInTime) {
+        robot.color_arm.setPosition(1.0);
+        smartSleep(armInTime);
+    }
 
- public void StopColorArm() {
-  robot.color_arm.setPosition(0);
-  smartSleep(.1);
- }
+    private void LiftUp(double liftUpTime) {
+        robot.right_arm.setPosition(0);
+        robot.left_arm.setPosition(1.0);
+        smartSleep(liftUpTime);
+    }
 
- private void StopLift() {
-  robot.right_arm.setPosition(.5);
-  robot.left_arm.setPosition(.5);
-  smartSleep(.1);
- }
+    private void LiftDown(double liftDownTime) {
+        robot.right_arm.setPosition(1.0);
+        robot.left_arm.setPosition(0);
+        smartSleep(liftDownTime);
+    }
 
- public void StopDriving() {
-  robot.motor_bLeft.setPower(0);
-  robot.motor_bRight.setPower(0);
-  robot.motor_fLeft.setPower(0);
-  robot.motor_fRight.setPower(0);
-  smartSleep(1);
- }
+    public void StopColorArm() {
+        robot.color_arm.setPosition(0);
+        smartSleep(.1);
+    }
 
- private void StopGrippie() {
-  robot.grippie.setPower(0);
-  smartSleep(1);
- }
+    private void StopLift() {
+        robot.right_arm.setPosition(.5);
+        robot.left_arm.setPosition(.5);
+        smartSleep(.1);
+    }
 
- private void smartSleep(double runTime) {
-  while (opModeIsActive() && (runtime.seconds() < runTime)) {
+    public void StopDriving() {
+        robot.motor_bLeft.setPower(0);
+        robot.motor_bRight.setPower(0);
+        robot.motor_fLeft.setPower(0);
+        robot.motor_fRight.setPower(0);
+        smartSleep(1);
+    }
+
+    private void StopGrippie() {
+        robot.grippie.setPower(0);
+        smartSleep(1);
+    }
+
+    private void smartSleep(double runTime) {
+        while (opModeIsActive() && (runtime.seconds() < runTime)) {
    int true = 1;
-  }
- }
+        }
+    }
 
 }
