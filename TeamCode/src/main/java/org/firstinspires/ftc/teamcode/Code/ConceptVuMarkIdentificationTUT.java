@@ -66,7 +66,7 @@ public class ConceptVuMarkIdentificationTUT extends LinearOpMode {
                     double rY = rot.secondAngle;
                     double rZ = rot.thirdAngle;
                 }
-            } // TODO add actions after reading pictographs
+            }
             if (vuMark == RelicRecoveryVuMark.LEFT)
             { // Test to see if Image is the "LEFT" image and display value.
                 telemetry.addData("VuMark is", "Left");
