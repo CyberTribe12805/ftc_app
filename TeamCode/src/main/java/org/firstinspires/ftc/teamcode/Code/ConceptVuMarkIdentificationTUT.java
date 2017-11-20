@@ -66,6 +66,26 @@ public class ConceptVuMarkIdentificationTUT extends LinearOpMode {
                     double rY = rot.secondAngle;
                     double rZ = rot.thirdAngle;
                 }
+            } // TODO add actions after reading pictographs
+            if (vuMark == RelicRecoveryVuMark.LEFT)
+            { // Test to see if Image is the "LEFT" image and display value.
+                telemetry.addData("VuMark is", "Left");
+                telemetry.addData("X =", tX);
+                telemetry.addData("Y =", tY);
+                telemetry.addData("Z =", tZ);
+            } else if (vuMark == RelicRecoveryVuMark.RIGHT)
+            { // Test to see if Image is the "RIGHT" image and display values.
+                telemetry.addData("VuMark is", "Right");
+                telemetry.addData("X =", tX);
+                telemetry.addData("Y =", tY);
+                telemetry.addData("Z =", tZ);
+            } else if (vuMark == RelicRecoveryVuMark.CENTER)
+            { // Test to see if Image is the "CENTER" image and display values.
+                telemetry.addData("VuMark is", "Center");
+                telemetry.addData("X =", tX);
+                telemetry.addData("Y =", tY);
+                telemetry.addData("Z =", tZ);
+
             }
             else {
                 telemetry.addData("VuMark", "not visible");
