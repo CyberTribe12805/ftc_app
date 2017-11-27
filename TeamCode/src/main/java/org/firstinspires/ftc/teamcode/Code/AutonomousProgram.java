@@ -37,7 +37,7 @@ public class AutonomousProgram extends LinearOpMode {
     public static final String TAG = "Vuforia VuMark Sample";
 
     OpenGLMatrix lastLocation = null;
-    String side;
+    char side;
     VuforiaLocalizer vuforia;
 
 
@@ -89,44 +89,39 @@ public class AutonomousProgram extends LinearOpMode {
             }
         });
 
-        if (side == "Left")
-        {
-//            TODO minimize the if statements by creating classses to replace them
-            CloseGrippie(1);
-            StopGrippie();
-            ColorArmOut(1);
-            StopColorArm();
+        CloseGrippie(1);
+        StopGrippie();
+        ColorArmOut(1);
+        StopColorArm();
 
-            if (robot.sensorColor.red() > 10 && robot.sensorDistance.getDistance(DistanceUnit.CM) < 5) {
-                ColorArmIn(1);
-                DrivePowerTime(1, -1, 2);
-                StopDriving();
-            } else {
-                ColorArmIn(1);
-                DrivePowerTime(-1, 1, 2);
-                StopDriving();
-            }
-
-            LiftUp(1);
-            StopLift();
-            DrivePowerTime(1, -1, 1);
-            TurnRight(1);
-            LiftDown(1);
-            OpenGrippie(1);
-            StopGrippie();
-
-        }
-        else if (side == "Right")
-        {
-
-        }
-        else if (side == "Center")
-        {
-
-        }
-        else{
+        if (robot.sensorColor.red() > 10 && robot.sensorDistance.getDistance(DistanceUnit.CM) < 5) {
+            TurnLeft(l);
+            ColorArmIn(1);
+            StopDriving();
+        } else {
+            DrivePowerTime(-1, 1, 2);
+            ColorArmIn(1);
             StopDriving();
         }
+        switch (side) {
+            case 'R':
+                break;
+            case 'L':
+                break;
+            case 'C':
+                break;
+            default:
+                StopDriving();
+
+                break;
+        }
+        LiftUp(1);
+        StopLift();
+        DrivePowerTime(1, -1, 1);
+        TurnRight(1);
+        LiftDown(1);
+        OpenGrippie(1);
+        StopGrippie();
 
         while (opModeIsActive()) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -154,19 +149,19 @@ public class AutonomousProgram extends LinearOpMode {
                 telemetry.addData("X =", tX);
                 telemetry.addData("Y =", tY);
                 telemetry.addData("Z =", tZ);
-                String side = "Left";
+                char side = 'L';
             } else if (vuMark == RelicRecoveryVuMark.RIGHT) { // Test to see if Image is the "RIGHT" image and display values.
                 telemetry.addData("VuMark is", "Right");
                 telemetry.addData("X =", tX);
                 telemetry.addData("Y =", tY);
                 telemetry.addData("Z =", tZ);
-                String side = "Right";
+                char side = 'R';
             } else if (vuMark == RelicRecoveryVuMark.CENTER) { // Test to see if Image is the "CENTER" image and display values.
                 telemetry.addData("VuMark is", "Center");
                 telemetry.addData("X =", tX);
                 telemetry.addData("Y =", tY);
                 telemetry.addData("Z =", tZ);
-                String side = "Center";
+                char side = 'C';
             } else {
                 telemetry.addData("VuMark", "not visible");
             }
@@ -196,7 +191,7 @@ public class AutonomousProgram extends LinearOpMode {
         smartSleep(turnRightTime);
     }
 
-    public void TurnLeft(long turnLeftTime) {
+    public void TurnLeft(double turnLeftTime) {
         robot.motor_bLeft.setPower(1);
         robot.motor_bRight.setPower(-1);
         robot.motor_fLeft.setPower(1);
@@ -238,7 +233,7 @@ public class AutonomousProgram extends LinearOpMode {
 
     public void StopColorArm() {
         robot.color_arm.setPosition(0);
-        smartSleep(.1);
+        smartSleep(0.01);
     }
 
     private void StopLift() {
@@ -252,17 +247,17 @@ public class AutonomousProgram extends LinearOpMode {
         robot.motor_bRight.setPower(0);
         robot.motor_fLeft.setPower(0);
         robot.motor_fRight.setPower(0);
-        smartSleep(1);
+        smartSleep(.1);
     }
 
     private void StopGrippie() {
         robot.grippie.setPower(0);
-        smartSleep(1);
+        smartSleep(.1);
     }
 
     private void smartSleep(double runTime) {
         while (opModeIsActive() && (runtime.seconds() < runTime)) {
-   int true = 1;
+   int tru = 1;
         }
     }
 
